@@ -5,7 +5,6 @@
 Following this guide you will be able to install and configure website based on Ubuntu 20.04 LTS 64Bit (ARM64 anor AMD64), NGINX 1.19, TLSv1.3, PHP 7.4, MariaDB 10.5, Redis, UFW and fail2ban. You will achieve an A+ rating from Qualys SSL Labs. We will request and implement your ssl certificate(s) from Let’s Encrypt – you only have to ammend all the ```diff + red``` marked values like `your.domain.io`, `192.168.2.x` with regards to your environment!
 
 ## Table of content
-
 1. [Prepare your server.](#section1)
 2. [Install NGINX 1.19.](#section2)
 3. [PHP 7.4.](#section3)
@@ -14,7 +13,7 @@ Following this guide you will be able to install and configure website based on 
 6. [Symfony Application (SSL enabled, A+).](#section6)
 7. [Hardening (faul2ban & ufw).](#section7)
 
-## <a name="section1"></a> Prepare your server. 
+### <a name="section1"></a> 1. Prepare your server. 
 
 Change into sudo mode:
 ```
@@ -81,8 +80,7 @@ Remove old nginx software if exists (optional):
 apt remove nginx nginx-extras nginx-common nginx-full -y --allow-change-held-packages
 ```
 
-
-### <a id="anchortext" /> 2. Install and configure NGINX
+### <a name="section2"></a> 2. Install and configure NGINX.
 
 
 First ensure Apache(2) isn’t running otherwise NGINX won’t start because the required port (:80) would be in use by Apache(2):
@@ -160,7 +158,7 @@ chown -R www-data:www-data /var/www
 ```
 The preparation and installation of nginx has finished and we will install PHP latest in the next chapter. 
 
-### 3. Install and configure PHP 7.4 (fpm)
+### <a name="section3"></a> 3. Install and configure PHP 7.4 (fpm)
 
 The PHP repository was enabled in chapter 1 – so just perform the following statement to install PHP:
 ```
@@ -251,7 +249,7 @@ service nginx restart
 ```
 PHP was successfully installed and configured – we will go ahead with the installation of MariaDB.
 
-### 4. Install, harden and configure MariaDB 10.5
+### <a name="section4"></a> 4. Install, harden and configure MariaDB 10.5
 
 Install MariaDB by issuing the following statement:
 ```
@@ -388,6 +386,50 @@ CREATE DATABASE db_name CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci; CREATE
 Verify the transaction isolation level is set to READ_Commit and the collation is set to UTF8MB4 properly: 
 ```
 mysql -h localhost -uroot -p -e "SELECT @@TX_ISOLATION; SELECT SCHEMA_NAME 'database', default_character_set_name 'charset', DEFAULT_COLLATION_NAME 'collation' FROM information_schema.SCHEMATA WHERE SCHEMA_NAME='db_name'"
+```
+
+The resultset should consist of “READ-COMMITTED” and “utf8mb4_general_ci” … go ahead with the installation of the redis-server.
+
+### <a name="section4"></a> 4. Install and configure Redis
+
+Install the redis-server to optimize Nextclouds performance and to minimize the load on the database:
+```
+apt update
+apt install redis-server php-redis -y
+```
+
+Change the redis configuration and set the group membership properly:
+```
+cp /etc/redis/redis.conf /etc/redis/redis.conf.bak
+sed -i "s/port 6379/port 0/" /etc/redis/redis.conf
+sed -i s/\#\ unixsocket/\unixsocket/g /etc/redis/redis.conf
+sed -i "s/unixsocketperm 700/unixsocketperm 770/" /etc/redis/redis.conf
+sed -i "s/# maxclients 10000/maxclients 512/" /etc/redis/redis.conf
+usermod -aG redis www-data
+```
+```
+cp /etc/sysctl.conf /etc/sysctl.conf.bak
+sed -i '$avm.overcommit_memory = 1' /etc/sysctl.conf
+```
+
+Now reboot your server once:
+```
+reboot now
+```
+
+We are now ready to install our Symfony application.
+
+```
+
+```
+```
+
+```
+```
+
+```
+```
+
 ```
 ```
 
