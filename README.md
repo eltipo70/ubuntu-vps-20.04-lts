@@ -2,18 +2,19 @@
 
 #### Production Web Server Installation Guide
 
-Following this guide you will be able to install and configure website based on Ubuntu 20.04 LTS 64Bit (ARM64 anor AMD64), NGINX 1.19, TLSv1.3, PHP 7.4, MariaDB 10.5, Redis, UFW and fail2ban. You will achieve an A+ rating from Qualys SSL Labs. We will request and implement your ssl certificate(s) from Let’s Encrypt – you only have to ammend all the <span style="color:red">red</spam> marked values like `your.domain.io`, `192.168.2.x` with regards to your environment!
+Following this guide you will be able to install and configure website based on Ubuntu 20.04 LTS 64Bit (ARM64 anor AMD64), NGINX 1.19, TLSv1.3, PHP 7.4, MariaDB 10.5, Redis, UFW and fail2ban. You will achieve an A+ rating from Qualys SSL Labs. We will request and implement your ssl certificate(s) from Let’s Encrypt – you only have to ammend all the ```diff + red``` marked values like `your.domain.io`, `192.168.2.x` with regards to your environment!
 
 ## Table of content
-1. Prepare your server.
-2. Install NGINX 1.19.
-3. PHP 7.4.
-4. MariaDB 10.5.
-5. Redis Server.
-6. Symfony Application (SSL enabled, A+).
-7. Hardening (faul2ban & ufw).
 
-### 1. Prepare your server
+1. [Prepare your server.](#section1)
+2. [Install NGINX 1.19.](#section2)
+3. [PHP 7.4.](#section3)
+4. [MariaDB 10.5.](#section4)
+5. [Redis Server.](#section5)
+6. [Symfony Application (SSL enabled, A+).](#section6)
+7. [Hardening (faul2ban & ufw).](#section7)
+
+## <a name="section1"></a> Prepare your server. 
 
 Change into sudo mode:
 ```
@@ -80,7 +81,9 @@ Remove old nginx software if exists (optional):
 apt remove nginx nginx-extras nginx-common nginx-full -y --allow-change-held-packages
 ```
 
-### 2. Install and configure NGINX
+
+### <a id="anchortext" /> 2. Install and configure NGINX
+
 
 First ensure Apache(2) isn’t running otherwise NGINX won’t start because the required port (:80) would be in use by Apache(2):
 ```
