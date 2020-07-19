@@ -2,7 +2,7 @@
 
 #### Production Web Server Installation Guide
 
-Following this guide you will be able to install and configure website based on Ubuntu 20.04 LTS 64Bit (ARM64 anor AMD64), NGINX 1.19, TLSv1.3, PHP 7.4, MariaDB 10.5, Redis, UFW and fail2ban. You will achieve an A+ rating from Qualys SSL Labs. We will request and implement your ssl certificate(s) from Let’s Encrypt – you only have to ammend all the <strong style="text-color: red;">red</strong> marked values like your.domain.io, 192.168.2.x with regards to your environment!
+Following this guide you will be able to install and configure website based on Ubuntu 20.04 LTS 64Bit (ARM64 anor AMD64), NGINX 1.19, TLSv1.3, PHP 7.4, MariaDB 10.5, Redis, UFW and fail2ban. You will achieve an A+ rating from Qualys SSL Labs. We will request and implement your ssl certificate(s) from Let’s Encrypt – you only have to ammend all the <span style="color:red">red</spam> marked values like `your.domain.io`, `192.168.2.x` with regards to your environment!
 
 ## Table of content
 1. Prepare your server.
