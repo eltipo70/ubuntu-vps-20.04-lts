@@ -390,7 +390,7 @@ mysql -h localhost -uroot -p -e "SELECT @@TX_ISOLATION; SELECT SCHEMA_NAME 'data
 
 The resultset should consist of “READ-COMMITTED” and “utf8mb4_general_ci” … go ahead with the installation of the redis-server.
 
-### <a name="section4"></a> 4. Install and configure Redis
+### <a name="section5"></a> 5. Install and configure Redis
 
 Install the redis-server to optimize Nextclouds performance and to minimize the load on the database:
 ```
