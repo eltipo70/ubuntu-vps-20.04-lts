@@ -392,7 +392,7 @@ The resultset should consist of “READ-COMMITTED” and “utf8mb4_general_ci�
 
 ### <a name="section5"></a> 5. Install and configure Redis
 
-Install the redis-server to optimize Nextclouds performance and to minimize the load on the database:
+Install the redis-server to optimize application performance and to minimize the load on the database:
 ```
 apt update
 apt install redis-server php-redis -y
@@ -419,11 +419,104 @@ reboot now
 
 We are now ready to install our Symfony application.
 
-```
+### <a name="section6"></a> 6. Prepare NGINX for web application
+
+First create all the configuration and webhost files (aka vhost). Change into sudo mode and create the /etc/nginx/conf.d/app.conf (vhost):
 
 ```
+sudo -s
+```
+```
+[ -f /etc/nginx/conf.d/default.conf ] && mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.bak
+```
+```
+touch /etc/nginx/conf.d/default.conf
+```
+```
+nano /etc/nginx/conf.d/app.conf
 ```
 
+Paste all the following rows and customize the red marked parameters: 
+```
+server {
+server_name your.domain.io;
+listen 80 default_server;
+listen [::]:80 default_server;
+location ^~ /.well-known/acme-challenge {
+proxy_pass http://127.0.0.1:81;
+proxy_set_header Host $host;
+}
+location / {
+return 301 https://$host$request_uri;
+}
+}
+server {
+server_name your.domain.io;
+listen 443 ssl http2 default_server;
+listen [::]:443 ssl http2 default_server;
+root /var/www/app_name/;
+location = /robots.txt {
+allow all;
+log_not_found off;
+access_log off;
+}
+location = /.well-known/carddav {
+return 301 $scheme://$host/remote.php/dav;
+}
+location = /.well-known/caldav {
+return 301 $scheme://$host/remote.php/dav;
+}
+#SOCIAL app enabled? Please uncomment the following row
+#rewrite ^/.well-known/webfinger /public.php?service=webfinger last;
+#WEBFINGER app enabled? Please uncomment the following two rows.
+#rewrite ^/.well-known/host-meta /public.php?service=host-meta last;
+#rewrite ^/.well-known/host-meta.json /public.php?service=host-meta-json last;
+client_max_body_size 10240M;
+location / {
+rewrite ^ /index.php;
+}
+location ~ ^/(?:build|tests|config|lib|3rdparty|templates|data)/ {
+deny all;
+}
+location ~ ^/(?:\.|autotest|occ|issue|indie|db_|console) {
+deny all;
+}
+location ^~ /apps/rainloop/app/data {
+deny all;
+}
+location ~ \.(?:flv|mp4|mov|m4a)$ {
+mp4;
+mp4_buffer_size 100M;
+mp4_max_buffer_size 1024M;
+fastcgi_split_path_info ^(.+?.php)(\/.*|)$;
+set $path_info $fastcgi_path_info;
+try_files $fastcgi_script_name =404;
+include fastcgi_params;
+include php_optimization.conf;
+}
+location ~ ^\/(?:index|remote|public|cron|core\/ajax\/update|status|ocs\/v[12]|updater\/.+|oc[ms]-provider\/.+).php(?:$|\/) {
+fastcgi_split_path_info ^(.+?.php)(\/.*|)$;
+set $path_info $fastcgi_path_info;
+try_files $fastcgi_script_name =404;
+include fastcgi_params;
+include php_optimization.conf;
+}
+location ~ ^\/(?:updater|oc[ms]-provider)(?:$|\/) {
+try_files $uri/ =404;
+index index.php;
+}
+location ~ \.(?:css|js|woff2?|svg|gif|map|png|html|ttf|ico|jpg|jpeg)$ {
+try_files $uri /index.php$request_uri;
+access_log off;
+expires 360d;
+}
+}
+```
+```
+git clone git@github.com:guthub_username/repository_name.git
+```
+```
+composer install
 ```
 ```
 
